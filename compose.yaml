@@ -1,0 +1,58 @@
+services:
+
+  # Localstack-UI Application
+  localstack-ui:
+    build:
+      context: .
+      dockerfile: ./docker/localstack-ui/Dockerfile
+    container_name: localstack-ui-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./envs/localstack-ui.env
+    volumes:
+      - "./src:/app/src:ro"
+      - "./templates:/app/templates:ro"
+      - "./static:/app/static:ro"
+      - "./food_diary.db:/app/food_diary.db"
+    depends_on:
+      localstack:
+        condition: service_healthy
+    networks:
+      - localstack-ui-network
+    command:
+      [
+        "uvicorn",
+        "src.food_diary.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
+
+  # LocalStack - AWS services emulator
+  localstack:
+    build:
+      context: ./docker/localstack.env
+      dockerfile: Dockerfile
+    container_name: localstack-ui-localstack
+    ports:
+      - "4566:4566" # LocalStack main port
+      - "4510-4559:4510-4559" # External service port range
+    env_file:
+      - ./envs/localstack/.env
+    volumes:
+      - "./docker/localstack/init:/etc/localstack/init/ready.d"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - localstack-ui-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  localstack-ui-network:
+    driver: bridge
