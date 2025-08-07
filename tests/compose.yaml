@@ -11,20 +11,41 @@ services:
       - ../templates:/app/templates
       - ../pyproject.toml:/app/pyproject.toml
     environment:
-      - OAUTH_PROVIDER=mock
-      - MOCK_OAUTH_URL=http://mock-oauth:8080
       - BASE_URL=https://localstack-ui-nginx
-    # Command to run the application, ensuring it listens on all interfaces
-    # and uses the standard port 8000.
-    command: uvicorn src.food_diary.main:app --host 0.0.0.0 --port 8000 --log-level error
+      - LOCALSTACK_ENDPOINT=http://localstack-ui-localstack:4566
+    command: uvicorn src.localstack_ui.main:app --host 0.0.0.0 --port 8000 --log-level error
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 1s
       timeout: 1s
       retries: 5
       start_period: 1s
+    depends_on:
+      localstack-ui-localstack:
+        condition: service_healthy
     networks:
-      - food_diary_test_network
+      - localstack_ui_test_network
+
+  localstack-ui-localstack:
+    build:
+      context: ..
+      dockerfile: ./docker/localstack/Dockerfile
+    container_name: localstack-ui-localstack-test
+    environment:
+      - SERVICES=s3,lambda,stepfunctions
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - LAMBDA_EXECUTOR=local
+    volumes:
+      - "../docker/localstack/init:/etc/localstack/init/ready.d"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - localstack_ui_test_network
 
   localstack-ui-nginx:
     build:
@@ -34,14 +55,12 @@ services:
       - "443:443"
       - "80:80"
     volumes:
-      - ../nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      mock-oauth:
-        condition: service_healthy
       localstack-ui-app:
         condition: service_healthy
     networks:
-      - food_diary_test_network
+      - localstack_ui_test_network
 
   localstack-ui-playwright:
     build:
@@ -50,7 +69,7 @@ services:
     depends_on:
       - localstack-ui-nginx
     networks:
-      - food_diary_test_network
+      - localstack_ui_test_network
     volumes:
       - ../tests:/tests
     working_dir: /tests
@@ -60,5 +79,5 @@ services:
     command: ["python", "e2e/test_app.py"]
 
 networks:
-  food_diary_test_network:
+  localstack_ui_test_network:
     driver: bridge
