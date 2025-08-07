@@ -1,9 +1,10 @@
 ---
 id: task-010
 title: Create Playwright E2E tests
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2025-08-07 20:06'
+updated_date: '2025-08-07 21:22'
 labels: []
 dependencies: []
 ---
