@@ -1,9 +1,10 @@
 ---
 id: task-005
 title: Implement S3 bucket management
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2025-08-07 20:05'
+updated_date: '2025-08-07 20:23'
 labels: []
 dependencies: []
 ---
