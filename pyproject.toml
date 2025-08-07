@@ -1,0 +1,28 @@
+[project]
+name = "localstack-ui"
+version = "0.1.0"
+description = "Web interface for LocalStack AWS services emulator"
+dependencies = [
+    "starlette",
+    "uvicorn[standard]",
+    "boto3",
+    "python-multipart",
+    "jinja2",
+]
+
+[tool.ruff]
+fix = true
+unsafe-fixes = true
+line-length = 100
+
+[tool.ruff.lint]
+extend-select = ["E", "F", "I"]
+unfixable = ["F841"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.ruff.lint.isort]
+known-first-party = ["localstack-ui"]
