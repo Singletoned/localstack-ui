@@ -1,9 +1,10 @@
 ---
 id: task-002
 title: Create Docker infrastructure
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2025-08-07 20:05'
+updated_date: '2025-08-07 20:17'
 labels: []
 dependencies: []
 ---
