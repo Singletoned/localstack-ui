@@ -7,6 +7,7 @@ from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
 from .aws_client import aws_client_factory
+from .routes.s3 import s3_routes
 from .settings import settings
 
 
@@ -48,6 +49,9 @@ routes = [
     Route("/health", health_check, name="health"),
     Route("/health/localstack", localstack_health, name="localstack_health"),
 ]
+
+# Add S3 routes
+routes.extend(s3_routes)
 
 middleware = [
     Middleware(ServerErrorMiddleware, debug=settings.DEBUG),

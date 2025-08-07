@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}S3 Buckets - LocalStack UI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title">
+                    <i class="fas fa-database"></i>&nbsp;S3 Buckets
+                </h1>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <a href="{{ url_for('s3_create_bucket') }}" class="button is-primary">
+                    <i class="fas fa-plus"></i>&nbsp;Create Bucket
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if error_message %}
+    <div class="notification is-danger">
+        <button class="delete"></button>
+        <strong>Error:</strong> {{ error_message }}
+    </div>
+    {% endif %}
+
+    {% if success_message %}
+    <div class="notification is-success">
+        <button class="delete"></button>
+        {{ success_message }}
+    </div>
+    {% endif %}
+
+    {% if buckets %}
+    <div class="box">
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>Bucket Name</th>
+                    <th>Created</th>
+                    <th class="has-text-centered">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bucket in buckets %}
+                <tr>
+                    <td>
+                        <strong>{{ bucket.name }}</strong>
+                    </td>
+                    <td>
+                        {{ bucket.creation_date.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td class="has-text-centered">
+                        <div class="buttons is-centered">
+                            <a href="#" class="button is-small is-info" title="View Contents">
+                                <i class="fas fa-folder-open"></i>
+                            </a>
+                            <a href="{{ url_for('s3_delete_bucket', bucket_name=bucket.name) }}" 
+                               class="button is-small is-danger" title="Delete Bucket">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="notification is-info">
+        <div class="content">
+            <h4>No S3 Buckets Found</h4>
+            <p>You don't have any S3 buckets yet. Create your first bucket to get started.</p>
+            <a href="{{ url_for('s3_create_bucket') }}" class="button is-primary">
+                <i class="fas fa-plus"></i>&nbsp;Create Your First Bucket
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="notification is-light">
+        <div class="content">
+            <h5>About S3 Buckets</h5>
+            <ul>
+                <li>Buckets are containers for storing files in LocalStack S3</li>
+                <li>Bucket names must be globally unique and follow AWS naming rules</li>
+                <li>Empty buckets can be deleted immediately</li>
+                <li>Buckets with files must be emptied before deletion</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-hide notifications
+    document.addEventListener('DOMContentLoaded', () => {
+        const notifications = document.querySelectorAll('.notification .delete');
+        notifications.forEach((deleteButton) => {
+            deleteButton.addEventListener('click', () => {
+                deleteButton.parentElement.remove();
+            });
+        });
+    });
+</script>
+{% endblock %}
