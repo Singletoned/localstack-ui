@@ -1,9 +1,10 @@
 ---
 id: task-007
 title: Implement Lambda viewer
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2025-08-07 20:06'
+updated_date: '2025-08-07 20:42'
 labels: []
 dependencies: []
 ---
