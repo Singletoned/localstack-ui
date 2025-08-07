@@ -1,9 +1,10 @@
 ---
 id: task-008
 title: Implement Step Functions viewer
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2025-08-07 20:06'
+updated_date: '2025-08-07 21:18'
 labels: []
 dependencies: []
 ---
