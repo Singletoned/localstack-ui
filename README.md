@@ -27,11 +27,12 @@ A simple web interface for managing LocalStack AWS services. Built with Python/S
 ### Run the Application
 
 ```bash
-# Start everything in the foreground (recommended for development)
-just dev
+# Start everything in the foreground (builds and runs)
+just run
 
-# Or start in the background
-docker compose up -d
+# Or run manually
+docker compose build
+docker compose up
 
 # Check application health
 curl http://localhost:8000/health
@@ -52,23 +53,17 @@ LocalStack automatically creates sample resources:
 ## Available Commands
 
 ```bash
-# Start development environment in foreground
-just dev
+# Start development environment (builds and runs in foreground)
+just run
 
-# Run tests
+# Run end-to-end tests
 just test
 
-# Stop all services
-just down
-
-# View logs
-just logs
-
-# Format code
+# Format code with ruff
 just format
 
-# Build containers only
-just build
+# Clean up Docker resources
+just clean
 ```
 
 ## Development
@@ -143,7 +138,7 @@ More endpoints will be added for file operations and service viewers.
 just test
 
 # Or manually with Docker Compose
-docker compose -f tests/compose.yaml up --build playwright
+docker compose -f tests/compose.yaml up --build --abort-on-container-exit playwright
 ```
 
 Tests use Playwright to verify:
@@ -158,6 +153,7 @@ Tests use Playwright to verify:
 - Check if ports 4566 and 4510-4559 are available
 - Verify Docker has enough memory allocated (at least 2GB)
 - Check LocalStack logs: `docker compose logs localstack`
+- Stop and clean up: `just clean`
 
 ### Application Won't Connect to LocalStack
 - Ensure LocalStack is healthy: `curl http://localhost:4566/_localstack/health`
