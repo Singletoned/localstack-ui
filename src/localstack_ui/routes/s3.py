@@ -1,4 +1,4 @@
-from starlette.responses import HTMLResponse, RedirectResponse
+from starlette.responses import RedirectResponse
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 

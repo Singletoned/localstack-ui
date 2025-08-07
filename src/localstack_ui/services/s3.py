@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 
 from botocore.exceptions import ClientError
 
-from ..aws_client import AWSClientError, aws_client_factory
+from ..aws_client import aws_client_factory
 
 
 class S3ServiceError(Exception):

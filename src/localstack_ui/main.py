@@ -10,7 +10,6 @@ from .aws_client import aws_client_factory
 from .routes.s3 import s3_routes
 from .settings import settings
 
-
 templates = Jinja2Templates(directory="templates")
 
 
@@ -29,9 +28,7 @@ async def localstack_health(request):
     health_status = aws_client_factory.health_check()
 
     # Determine overall status
-    overall_healthy = all(
-        service["status"] == "healthy" for service in health_status.values()
-    )
+    overall_healthy = all(service["status"] == "healthy" for service in health_status.values())
 
     status_code = 200 if overall_healthy else 503
 

@@ -52,6 +52,5 @@ Thumbs.db
 # Logs
 *.log
 
-# Claude Code specific
+# Claude Code specific (but keep README.md in repo)
 .claude/
-CLAUDE.md
