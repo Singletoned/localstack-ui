@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}LocalStack UI - Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <div class="hero-body">
+            <h1 class="title">
+                Welcome to LocalStack UI
+            </h1>
+            <h2 class="subtitle">
+                Manage your LocalStack AWS services through a simple web interface
+            </h2>
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column is-4">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <i class="fas fa-database fa-2x has-text-info"></i>
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">S3 Buckets</p>
+                            <p class="subtitle is-6">Manage buckets and files</p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        Create, delete, and manage S3 buckets. Upload, download, and delete files with a 1MB size limit.
+                        <br>
+                        <a href="#" class="button is-info is-fullwidth mt-4">
+                            <i class="fas fa-database"></i>&nbsp;Manage S3
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-4">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <i class="fas fa-bolt fa-2x has-text-warning"></i>
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Lambda Functions</p>
+                            <p class="subtitle is-6">View function details</p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        Browse Lambda functions and view their configurations including runtime, memory, and environment variables.
+                        <br>
+                        <a href="#" class="button is-warning is-fullwidth mt-4">
+                            <i class="fas fa-bolt"></i>&nbsp;View Lambda
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-4">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <i class="fas fa-project-diagram fa-2x has-text-success"></i>
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Step Functions</p>
+                            <p class="subtitle is-6">View state machines</p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        Browse Step Functions state machines and view their definitions and execution details.
+                        <br>
+                        <a href="#" class="button is-success is-fullwidth mt-4">
+                            <i class="fas fa-project-diagram"></i>&nbsp;View Step Functions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification is-info">
+        <p><strong>Getting Started:</strong></p>
+        <ul>
+            <li>LocalStack is running with sample S3 buckets, Lambda functions, and Step Functions</li>
+            <li>Use the navigation menu or cards above to explore different services</li>
+            <li>File uploads are limited to 1MB for S3 operations</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
