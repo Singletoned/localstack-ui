@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from botocore.exceptions import ClientError
 
 from ..aws_client import aws_client_factory
+from ..settings import settings
 
 
 class S3ServiceError(Exception):
@@ -152,6 +153,177 @@ class S3Service:
             return "Bucket name cannot be formatted as an IP address"
 
         return None
+
+    def list_objects(self, bucket_name: str, prefix: str = "") -> List[Dict]:
+        """
+        List objects in an S3 bucket.
+
+        Args:
+            bucket_name: Name of the bucket
+            prefix: Prefix to filter objects (for folders)
+
+        Returns:
+            List of object dictionaries with key, size, last_modified
+        """
+        try:
+            response = self.client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+            objects = []
+
+            for obj in response.get("Contents", []):
+                objects.append(
+                    {
+                        "key": obj["Key"],
+                        "size": obj["Size"],
+                        "last_modified": obj["LastModified"],
+                        "etag": obj["ETag"].strip('"'),
+                    }
+                )
+
+            # Sort by key for consistent display
+            objects.sort(key=lambda x: x["key"])
+            return objects
+
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            raise S3ServiceError(f"Failed to list objects in '{bucket_name}' ({error_code}): {e}")
+        except Exception as e:
+            raise S3ServiceError(f"Unexpected error listing objects in '{bucket_name}': {e}")
+
+    def upload_file(
+        self, bucket_name: str, file_key: str, file_data: bytes
+    ) -> Tuple[bool, Optional[str]]:
+        """
+        Upload a file to an S3 bucket.
+
+        Args:
+            bucket_name: Name of the bucket
+            file_key: Key (name) of the file
+            file_data: Binary data of the file
+
+        Returns:
+            Tuple of (success, error_message)
+        """
+        # Validate file size
+        if len(file_data) > settings.MAX_FILE_SIZE_BYTES:
+            error_msg = (
+                f"File size ({len(file_data)} bytes) exceeds limit of {settings.MAX_FILE_SIZE_MB}MB"
+            )
+            return False, error_msg
+
+        # Validate file key
+        if not file_key or file_key.strip() == "":
+            return False, "File name cannot be empty"
+
+        try:
+            self.client.put_object(Bucket=bucket_name, Key=file_key, Body=file_data)
+            return True, None
+
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            if error_code == "NoSuchBucket":
+                return False, f"Bucket '{bucket_name}' does not exist"
+            else:
+                return False, f"Failed to upload file ({error_code}): {e}"
+        except Exception as e:
+            return False, f"Unexpected error uploading file: {e}"
+
+    def download_file(
+        self, bucket_name: str, file_key: str
+    ) -> Tuple[bool, Optional[bytes], Optional[str]]:
+        """
+        Download a file from an S3 bucket.
+
+        Args:
+            bucket_name: Name of the bucket
+            file_key: Key (name) of the file
+
+        Returns:
+            Tuple of (success, file_data, error_message)
+        """
+        try:
+            response = self.client.get_object(Bucket=bucket_name, Key=file_key)
+            file_data = response["Body"].read()
+            return True, file_data, None
+
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            if error_code == "NoSuchKey":
+                return False, None, f"File '{file_key}' not found in bucket '{bucket_name}'"
+            elif error_code == "NoSuchBucket":
+                return False, None, f"Bucket '{bucket_name}' does not exist"
+            else:
+                return False, None, f"Failed to download file ({error_code}): {e}"
+        except Exception as e:
+            return False, None, f"Unexpected error downloading file: {e}"
+
+    def delete_file(self, bucket_name: str, file_key: str) -> Tuple[bool, Optional[str]]:
+        """
+        Delete a file from an S3 bucket.
+
+        Args:
+            bucket_name: Name of the bucket
+            file_key: Key (name) of the file
+
+        Returns:
+            Tuple of (success, error_message)
+        """
+        try:
+            self.client.delete_object(Bucket=bucket_name, Key=file_key)
+            return True, None
+
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            if error_code == "NoSuchBucket":
+                return False, f"Bucket '{bucket_name}' does not exist"
+            else:
+                return False, f"Failed to delete file ({error_code}): {e}"
+        except Exception as e:
+            return False, f"Unexpected error deleting file: {e}"
+
+    def get_file_info(
+        self, bucket_name: str, file_key: str
+    ) -> Tuple[bool, Optional[Dict], Optional[str]]:
+        """
+        Get metadata about a file in an S3 bucket.
+
+        Args:
+            bucket_name: Name of the bucket
+            file_key: Key (name) of the file
+
+        Returns:
+            Tuple of (success, file_info, error_message)
+        """
+        try:
+            response = self.client.head_object(Bucket=bucket_name, Key=file_key)
+            file_info = {
+                "size": response.get("ContentLength", 0),
+                "last_modified": response.get("LastModified"),
+                "content_type": response.get("ContentType", "application/octet-stream"),
+                "etag": response.get("ETag", "").strip('"'),
+            }
+            return True, file_info, None
+
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            if error_code == "NotFound":
+                return False, None, f"File '{file_key}' not found in bucket '{bucket_name}'"
+            elif error_code == "NoSuchBucket":
+                return False, None, f"Bucket '{bucket_name}' does not exist"
+            else:
+                return False, None, f"Failed to get file info ({error_code}): {e}"
+        except Exception as e:
+            return False, None, f"Unexpected error getting file info: {e}"
+
+    def format_file_size(self, size_bytes: int) -> str:
+        """Format file size in human readable format."""
+        if size_bytes == 0:
+            return "0 B"
+
+        for unit in ["B", "KB", "MB", "GB"]:
+            if size_bytes < 1024.0:
+                return f"{size_bytes:.1f} {unit}"
+            size_bytes /= 1024.0
+        return f"{size_bytes:.1f} TB"
 
 
 # Global instance

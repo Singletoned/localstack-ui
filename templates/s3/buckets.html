@@ -56,7 +56,7 @@
                     </td>
                     <td class="has-text-centered">
                         <div class="buttons is-centered">
-                            <a href="#" class="button is-small is-info" title="View Contents">
+                            <a href="{{ url_for('s3_bucket_contents', bucket_name=bucket.name) }}" class="button is-small is-info" title="View Contents">
                                 <i class="fas fa-folder-open"></i>
                             </a>
                             <a href="{{ url_for('s3_delete_bucket', bucket_name=bucket.name) }}" 
