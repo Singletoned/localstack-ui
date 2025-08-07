@@ -9,6 +9,7 @@ from starlette.templating import Jinja2Templates
 from .aws_client import aws_client_factory
 from .routes.lambda_routes import lambda_routes
 from .routes.s3 import s3_routes
+from .routes.stepfunctions_routes import stepfunctions_routes
 from .settings import settings
 
 templates = Jinja2Templates(directory="templates")
@@ -53,6 +54,9 @@ routes.extend(s3_routes)
 
 # Add Lambda routes
 routes.extend(lambda_routes)
+
+# Add Step Functions routes
+routes.extend(stepfunctions_routes)
 
 middleware = [
     Middleware(ServerErrorMiddleware, debug=settings.DEBUG),
