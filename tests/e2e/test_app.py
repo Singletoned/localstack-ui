@@ -181,7 +181,7 @@ class LocalStackUITester:
         title = self.page.title()
         page_content = self.page.content()
 
-        # Either the function details should be visible or there should be an appropriate error message
+        # Either the function details should be visible or there should be an error message
         has_function_details = "hello-world" in title or "hello-world" in page_content
         has_error_message = "error" in page_content.lower() or "not found" in page_content.lower()
 
@@ -248,7 +248,7 @@ class LocalStackUITester:
         title = self.page.title()
         page_content = self.page.content()
 
-        # Either the state machine details should be visible or there should be an appropriate error message
+        # Either the state machine details should be visible or there should be an error message
         has_state_machine_details = "SimpleExample" in title or "SimpleExample" in page_content
         has_error_message = "error" in page_content.lower() or "not found" in page_content.lower()
 

@@ -1,334 +1,341 @@
-{% extends "base.html" %}
-
-{% block title %}{{ function_info.function_name if function_info else 'Function Not Found' }} - Lambda - LocalStack UI{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}{{ function_info.function_name if
+function_info else 'Function Not Found' }} - Lambda - LocalStack UI{% endblock
+%} {% block content %}
 <div class="container">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('lambda_functions') }}">Lambda Functions</a></li>
-            <li class="is-active">
-                <a href="#" aria-current="page">
-                    {{ function_info.function_name if function_info else 'Not Found' }}
-                </a>
-            </li>
-        </ul>
-    </nav>
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('lambda_functions') }}">Lambda Functions</a></li>
+      <li class="is-active">
+        <a href="#" aria-current="page">
+          {{ function_info.function_name if function_info else 'Not Found' }}
+        </a>
+      </li>
+    </ul>
+  </nav>
 
-    {% if error_message %}
-    <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error:</strong> {{ error_message }}
+  {% if error_message %}
+  <div class="notification is-danger">
+    <button class="delete"></button>
+    <strong>Error:</strong> {{ error_message }}
+  </div>
+  {% endif %} {% if function_info %}
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title">
+          <i class="fas fa-bolt"></i>&nbsp;{{ function_info.function_name }}
+        </h1>
+      </div>
     </div>
-    {% endif %}
-
-    {% if function_info %}
-    <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title">
-                    <i class="fas fa-bolt"></i>&nbsp;{{ function_info.function_name }}
-                </h1>
-            </div>
-        </div>
-        <div class="level-right">
-            <div class="level-item">
-                {% if function_info.state == 'Active' %}
-                <span class="tag is-success is-large">{{ function_info.state }}</span>
-                {% else %}
-                <span class="tag is-warning is-large">{{ function_info.state }}</span>
-                {% endif %}
-            </div>
-        </div>
+    <div class="level-right">
+      <div class="level-item">
+        {% if function_info.state == 'Active' %}
+        <span class="tag is-success is-large">{{ function_info.state }}</span>
+        {% else %}
+        <span class="tag is-warning is-large">{{ function_info.state }}</span>
+        {% endif %}
+      </div>
     </div>
+  </div>
 
-    <div class="columns">
-        <div class="column is-two-thirds">
-            <!-- Basic Information -->
-            <div class="box">
-                <h2 class="title is-4">Basic Information</h2>
-                <div class="content">
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Function Name</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <p class="control">
-                                    <strong>{{ function_info.function_name }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Description</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <p class="control">
-                                    {{ function_info.description or 'No description provided' }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">ARN</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <p class="control">
-                                    <code class="has-text-grey">{{ function_info.function_arn }}</code>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label">Handler</label>
-                        </div>
-                        <div class="field-body">
-                            <div class="field">
-                                <p class="control">
-                                    <code>{{ function_info.handler }}</code>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Runtime Configuration -->
-            <div class="box">
-                <h2 class="title is-4">Runtime Configuration</h2>
-                <div class="content">
-                    <div class="columns">
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Runtime</label>
-                                <p class="control">
-                                    <span class="tag is-info">{{ function_info.runtime }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Memory</label>
-                                <p class="control">
-                                    {{ format_memory_size(function_info.memory_size) }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Timeout</label>
-                                <p class="control">
-                                    {{ format_timeout(function_info.timeout) }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="columns">
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Package Type</label>
-                                <p class="control">
-                                    {{ function_info.package_type }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Code Size</label>
-                                <p class="control">
-                                    {{ format_code_size(function_info.code_size) }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Version</label>
-                                <p class="control">
-                                    {{ function_info.version }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if function_info.architectures %}
-                    <div class="field">
-                        <label class="label">Architectures</label>
-                        <p class="control">
-                            <div class="tags">
-                                {% for arch in function_info.architectures %}
-                                <span class="tag">{{ arch }}</span>
-                                {% endfor %}
-                            </div>
-                        </p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Environment Variables -->
-            {% if function_info.environment_variables %}
-            <div class="box">
-                <h2 class="title is-4">Environment Variables</h2>
-                <div class="content">
-                    <table class="table is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>Variable</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for key, value in function_info.environment_variables.items() %}
-                            <tr>
-                                <td><strong>{{ key }}</strong></td>
-                                <td><code>{{ value }}</code></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="column is-one-third">
-            <!-- Quick Stats -->
-            <div class="box">
-                <h3 class="title is-5">Quick Stats</h3>
-                <div class="content">
-                    <div class="level is-mobile">
-                        <div class="level-left">
-                            <div class="level-item">
-                                <div>
-                                    <p class="heading">Memory</p>
-                                    <p class="title is-6">{{ format_memory_size(function_info.memory_size) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="level-right">
-                            <div class="level-item">
-                                <span class="icon has-text-info">
-                                    <i class="fas fa-memory"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="level is-mobile">
-                        <div class="level-left">
-                            <div class="level-item">
-                                <div>
-                                    <p class="heading">Timeout</p>
-                                    <p class="title is-6">{{ format_timeout(function_info.timeout) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="level-right">
-                            <div class="level-item">
-                                <span class="icon has-text-warning">
-                                    <i class="fas fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="level is-mobile">
-                        <div class="level-left">
-                            <div class="level-item">
-                                <div>
-                                    <p class="heading">Code Size</p>
-                                    <p class="title is-6">{{ format_code_size(function_info.code_size) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="level-right">
-                            <div class="level-item">
-                                <span class="icon has-text-success">
-                                    <i class="fas fa-file-archive"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Metadata -->
-            <div class="box">
-                <h3 class="title is-5">Metadata</h3>
-                <div class="content">
-                    <div class="field">
-                        <label class="label">Last Modified</label>
-                        <p>{{ function_info.last_modified[:19] }}</p>
-                    </div>
-
-                    {% if function_info.code_sha256 %}
-                    <div class="field">
-                        <label class="label">Code SHA256</label>
-                        <p><code class="is-size-7">{{ function_info.code_sha256 }}</code></p>
-                    </div>
-                    {% endif %}
-
-                    {% if function_info.state_reason %}
-                    <div class="field">
-                        <label class="label">State Reason</label>
-                        <p>{{ function_info.state_reason }}</p>
-                        {% if function_info.state_reason_code %}
-                        <p class="help">Code: {{ function_info.state_reason_code }}</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="box">
-                <h3 class="title is-5">Actions</h3>
-                <div class="content">
-                    <div class="buttons">
-                        <a href="{{ url_for('lambda_functions') }}" class="button is-light is-fullwidth">
-                            <i class="fas fa-arrow-left"></i>&nbsp;Back to Functions
-                        </a>
-                    </div>
-                    <p class="help has-text-centered">
-                        This is a read-only view. Function cannot be modified.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="notification is-warning">
+  <div class="columns">
+    <div class="column is-two-thirds">
+      <!-- Basic Information -->
+      <div class="box">
+        <h2 class="title is-4">Basic Information</h2>
         <div class="content">
-            <h4>Function Not Found</h4>
-            <p>The Lambda function you're looking for doesn't exist or cannot be accessed.</p>
-            <a href="{{ url_for('lambda_functions') }}" class="button is-light">
-                <i class="fas fa-arrow-left"></i>&nbsp;Back to Functions
-            </a>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Function Name</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <strong>{{ function_info.function_name }}</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Description</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  {{ function_info.description or 'No description provided' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">ARN</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <code class="has-text-grey"
+                    >{{ function_info.function_arn }}</code
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Handler</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <code>{{ function_info.handler }}</code>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Runtime Configuration -->
+      <div class="box">
+        <h2 class="title is-4">Runtime Configuration</h2>
+        <div class="content">
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">Runtime</label>
+                <p class="control">
+                  <span class="tag is-info">{{ function_info.runtime }}</span>
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Memory</label>
+                <p class="control">
+                  {{ format_memory_size(function_info.memory_size) }}
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Timeout</label>
+                <p class="control">
+                  {{ format_timeout(function_info.timeout) }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">Package Type</label>
+                <p class="control">{{ function_info.package_type }}</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Code Size</label>
+                <p class="control">
+                  {{ format_code_size(function_info.code_size) }}
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Version</label>
+                <p class="control">{{ function_info.version }}</p>
+              </div>
+            </div>
+          </div>
+
+          {% if function_info.architectures %}
+          <div class="field">
+            <label class="label">Architectures</label>
+            <div class="control">
+              <div class="tags">
+                {% for arch in function_info.architectures %}
+                <span class="tag">{{ arch }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Environment Variables -->
+      {% if function_info.environment_variables %}
+      <div class="box">
+        <h2 class="title is-4">Environment Variables</h2>
+        <div class="content">
+          <table class="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, value in function_info.environment_variables.items()
+              %}
+              <tr>
+                <td><strong>{{ key }}</strong></td>
+                <td><code>{{ value }}</code></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
+
+    <div class="column is-one-third">
+      <!-- Quick Stats -->
+      <div class="box">
+        <h3 class="title is-5">Quick Stats</h3>
+        <div class="content">
+          <div class="level is-mobile">
+            <div class="level-left">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Memory</p>
+                  <p class="title is-6">
+                    {{ format_memory_size(function_info.memory_size) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <span class="icon has-text-info">
+                  <i class="fas fa-memory"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="level is-mobile">
+            <div class="level-left">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Timeout</p>
+                  <p class="title is-6">
+                    {{ format_timeout(function_info.timeout) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <span class="icon has-text-warning">
+                  <i class="fas fa-clock"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="level is-mobile">
+            <div class="level-left">
+              <div class="level-item">
+                <div>
+                  <p class="heading">Code Size</p>
+                  <p class="title is-6">
+                    {{ format_code_size(function_info.code_size) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <span class="icon has-text-success">
+                  <i class="fas fa-file-archive"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="box">
+        <h3 class="title is-5">Metadata</h3>
+        <div class="content">
+          <div class="field">
+            <label class="label">Last Modified</label>
+            <p>{{ function_info.last_modified[:19] }}</p>
+          </div>
+
+          {% if function_info.code_sha256 %}
+          <div class="field">
+            <label class="label">Code SHA256</label>
+            <p>
+              <code class="is-size-7">{{ function_info.code_sha256 }}</code>
+            </p>
+          </div>
+          {% endif %} {% if function_info.state_reason %}
+          <div class="field">
+            <label class="label">State Reason</label>
+            <p>{{ function_info.state_reason }}</p>
+            {% if function_info.state_reason_code %}
+            <p class="help">Code: {{ function_info.state_reason_code }}</p>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="box">
+        <h3 class="title is-5">Actions</h3>
+        <div class="content">
+          <div class="buttons">
+            <a
+              href="{{ url_for('lambda_functions') }}"
+              class="button is-light is-fullwidth"
+            >
+              <i class="fas fa-arrow-left"></i>&nbsp;Back to Functions
+            </a>
+          </div>
+          <p class="help has-text-centered">
+            This is a read-only view. Function cannot be modified.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="notification is-warning">
+    <div class="content">
+      <h4>Function Not Found</h4>
+      <p>
+        The Lambda function you're looking for doesn't exist or cannot be
+        accessed.
+      </p>
+      <a href="{{ url_for('lambda_functions') }}" class="button is-light">
+        <i class="fas fa-arrow-left"></i>&nbsp;Back to Functions
+      </a>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-hide notifications
-        const notifications = document.querySelectorAll('.notification .delete');
-        notifications.forEach((deleteButton) => {
-            deleteButton.addEventListener('click', () => {
-                deleteButton.parentElement.remove();
-            });
-        });
+  document.addEventListener("DOMContentLoaded", () => {
+    // Auto-hide notifications
+    const notifications = document.querySelectorAll(".notification .delete");
+    notifications.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", () => {
+        deleteButton.parentElement.remove();
+      });
     });
+  });
 </script>
 {% endblock %}
