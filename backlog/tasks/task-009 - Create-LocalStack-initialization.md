@@ -3,8 +3,8 @@ id: task-009
 title: Create LocalStack initialization
 status: Done
 assignee: []
-created_date: '2025-08-07 20:06'
-updated_date: '2025-08-07 21:22'
+created_date: "2025-08-07 20:06"
+updated_date: "2025-08-07 21:22"
 labels: []
 dependencies: []
 ---

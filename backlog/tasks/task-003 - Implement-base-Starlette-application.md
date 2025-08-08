@@ -3,8 +3,8 @@ id: task-003
 title: Implement base Starlette application
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:21'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:21"
 labels: []
 dependencies: []
 ---

@@ -1,5 +1,4 @@
 services:
-
   # Localstack-UI Application
   localstack-ui:
     build:

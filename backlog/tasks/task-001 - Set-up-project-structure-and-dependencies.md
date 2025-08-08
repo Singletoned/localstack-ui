@@ -3,8 +3,8 @@ id: task-001
 title: Set up project structure and dependencies
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:16'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:16"
 labels: []
 dependencies: []
 ---

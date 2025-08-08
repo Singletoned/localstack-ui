@@ -14,11 +14,12 @@ async def list_functions(request):
 
     try:
         functions = lambda_service.list_functions()
-        
+
         # Apply search filter if provided
         if search_query:
             functions = [
-                func for func in functions
+                func
+                for func in functions
                 if search_query.lower() in func["function_name"].lower()
                 or search_query.lower() in func.get("description", "").lower()
                 or search_query.lower() in func.get("runtime", "").lower()

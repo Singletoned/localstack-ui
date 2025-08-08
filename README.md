@@ -40,12 +40,14 @@ curl http://localhost:8000/health/localstack
 ```
 
 The application will be available at:
+
 - **Web UI**: http://localhost:8000
 - **LocalStack**: http://localhost:4566
 
 ### Pre-loaded Demo Data
 
 LocalStack automatically creates sample resources:
+
 - **S3 Buckets**: `demo-bucket-1`, `demo-bucket-2`, `test-uploads`
 - **Lambda Functions**: `hello-world`, `data-processor`
 - **Step Functions**: `SimpleExample`, `DataProcessingWorkflow`
@@ -119,10 +121,12 @@ Follow the existing patterns for consistency.
 ## API Endpoints
 
 ### Health Checks
+
 - `GET /health` - Basic health check
 - `GET /health/localstack` - Detailed LocalStack service status
 
 ### S3 Management
+
 - `GET /s3/buckets` - List all buckets
 - `GET /s3/buckets/create` - Show bucket creation form
 - `POST /s3/buckets/create` - Create new bucket
@@ -142,6 +146,7 @@ docker compose -f tests/compose.yaml up --build --abort-on-container-exit playwr
 ```
 
 Tests use Playwright to verify:
+
 - Application loads correctly
 - S3 bucket operations work
 - Navigation functions properly
@@ -150,17 +155,20 @@ Tests use Playwright to verify:
 ## Troubleshooting
 
 ### LocalStack Not Starting
+
 - Check if ports 4566 and 4510-4559 are available
 - Verify Docker has enough memory allocated (at least 2GB)
 - Check LocalStack logs: `docker compose logs localstack`
 - Stop and clean up: `just clean`
 
 ### Application Won't Connect to LocalStack
+
 - Ensure LocalStack is healthy: `curl http://localhost:4566/_localstack/health`
 - Check health endpoint: `curl http://localhost:8000/health/localstack`
 - Verify network configuration in `compose.yaml`
 
 ### File Upload Issues
+
 - Default file size limit is 1MB (configurable via `MAX_FILE_SIZE_MB`)
 - Ensure bucket exists and is accessible
 - Check browser developer tools for JavaScript errors
@@ -168,6 +176,7 @@ Tests use Playwright to verify:
 ## Security Considerations
 
 This application is designed for **local development only**. It includes:
+
 - No authentication (open access)
 - Test AWS credentials
 - Debug mode enabled

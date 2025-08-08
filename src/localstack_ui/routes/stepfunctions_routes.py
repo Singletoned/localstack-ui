@@ -14,11 +14,12 @@ async def list_state_machines(request):
 
     try:
         state_machines = stepfunctions_service.list_state_machines()
-        
+
         # Apply search filter if provided
         if search_query:
             state_machines = [
-                sm for sm in state_machines
+                sm
+                for sm in state_machines
                 if search_query.lower() in sm["name"].lower()
                 or search_query.lower() in sm.get("type", "").lower()
                 or search_query.lower() in sm.get("status", "").lower()
@@ -48,7 +49,7 @@ async def state_machine_detail(request):
     try:
         state_machine_info = stepfunctions_service.describe_state_machine(state_machine_arn)
         if not state_machine_info:
-            error_message = f"State machine not found"
+            error_message = "State machine not found"
         else:
             # Try to get recent executions
             try:

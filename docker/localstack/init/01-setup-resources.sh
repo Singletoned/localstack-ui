@@ -16,9 +16,9 @@ awslocal s3 mb s3://test-uploads
 
 # Add some test files to buckets
 echo "Adding test files to buckets..."
-echo "Hello World" > /tmp/hello.txt
-echo "Sample document content" > /tmp/sample.txt
-echo '{"test": "data"}' > /tmp/data.json
+echo "Hello World" >/tmp/hello.txt
+echo "Sample document content" >/tmp/sample.txt
+echo '{"test": "data"}' >/tmp/data.json
 
 awslocal s3 cp /tmp/hello.txt s3://demo-bucket-1/hello.txt
 awslocal s3 cp /tmp/sample.txt s3://demo-bucket-1/docs/sample.txt
@@ -28,7 +28,7 @@ awslocal s3 cp /tmp/data.json s3://demo-bucket-2/data.json
 echo "Creating Lambda functions..."
 
 # Create a simple Python function
-cat > /tmp/lambda_function.py << 'EOF'
+cat >/tmp/lambda_function.py <<'EOF'
 def lambda_handler(event, context):
     return {
         'statusCode': 200,
@@ -39,29 +39,29 @@ EOF
 zip -j /tmp/function.zip /tmp/lambda_function.py
 
 awslocal lambda create-function \
-    --function-name hello-world \
-    --runtime python3.9 \
-    --role arn:aws:iam::000000000000:role/lambda-role \
-    --handler lambda_function.lambda_handler \
-    --zip-file fileb:///tmp/function.zip \
-    --description "Simple hello world function"
+	--function-name hello-world \
+	--runtime python3.9 \
+	--role arn:aws:iam::000000000000:role/lambda-role \
+	--handler lambda_function.lambda_handler \
+	--zip-file fileb:///tmp/function.zip \
+	--description "Simple hello world function"
 
 # Create another function with different configuration
 awslocal lambda create-function \
-    --function-name data-processor \
-    --runtime python3.11 \
-    --role arn:aws:iam::000000000000:role/lambda-role \
-    --handler lambda_function.lambda_handler \
-    --zip-file fileb:///tmp/function.zip \
-    --description "Data processing function" \
-    --timeout 30 \
-    --memory-size 256
+	--function-name data-processor \
+	--runtime python3.11 \
+	--role arn:aws:iam::000000000000:role/lambda-role \
+	--handler lambda_function.lambda_handler \
+	--zip-file fileb:///tmp/function.zip \
+	--description "Data processing function" \
+	--timeout 30 \
+	--memory-size 256
 
 # Create Step Functions state machines
 echo "Creating Step Functions state machines..."
 
 # Simple state machine
-cat > /tmp/simple_state_machine.json << 'EOF'
+cat >/tmp/simple_state_machine.json <<'EOF'
 {
   "Comment": "A simple minimal example",
   "StartAt": "Hello",
@@ -76,12 +76,12 @@ cat > /tmp/simple_state_machine.json << 'EOF'
 EOF
 
 awslocal stepfunctions create-state-machine \
-    --name "SimpleExample" \
-    --definition file:///tmp/simple_state_machine.json \
-    --role-arn "arn:aws:iam::000000000000:role/StepFunctionsRole"
+	--name "SimpleExample" \
+	--definition file:///tmp/simple_state_machine.json \
+	--role-arn "arn:aws:iam::000000000000:role/StepFunctionsRole"
 
 # More complex state machine
-cat > /tmp/complex_state_machine.json << 'EOF'
+cat >/tmp/complex_state_machine.json <<'EOF'
 {
   "Comment": "Data processing workflow",
   "StartAt": "ProcessData",
@@ -115,9 +115,9 @@ cat > /tmp/complex_state_machine.json << 'EOF'
 EOF
 
 awslocal stepfunctions create-state-machine \
-    --name "DataProcessingWorkflow" \
-    --definition file:///tmp/complex_state_machine.json \
-    --role-arn "arn:aws:iam::000000000000:role/StepFunctionsRole"
+	--name "DataProcessingWorkflow" \
+	--definition file:///tmp/complex_state_machine.json \
+	--role-arn "arn:aws:iam::000000000000:role/StepFunctionsRole"
 
 # Clean up temporary files
 rm -f /tmp/hello.txt /tmp/sample.txt /tmp/data.json

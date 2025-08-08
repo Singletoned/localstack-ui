@@ -3,8 +3,8 @@ id: task-007
 title: Implement Lambda viewer
 status: Done
 assignee: []
-created_date: '2025-08-07 20:06'
-updated_date: '2025-08-07 20:45'
+created_date: "2025-08-07 20:06"
+updated_date: "2025-08-07 20:45"
 labels: []
 dependencies: []
 ---

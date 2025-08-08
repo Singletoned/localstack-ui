@@ -1,141 +1,142 @@
-{% extends "base.html" %}
-
-{% block title %}Create S3 Bucket - LocalStack UI{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Create S3 Bucket - LocalStack UI{%
+endblock %} {% block content %}
 <div class="container">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Create Bucket</a></li>
-        </ul>
-    </nav>
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
+      <li class="is-active">
+        <a href="#" aria-current="page">Create Bucket</a>
+      </li>
+    </ul>
+  </nav>
 
-    <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title">
-                    <i class="fas fa-plus"></i>&nbsp;Create S3 Bucket
-                </h1>
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title"><i class="fas fa-plus"></i>&nbsp;Create S3 Bucket</h1>
+      </div>
+    </div>
+  </div>
+
+  {% if error_message %}
+  <div class="notification is-danger">
+    <button class="delete"></button>
+    <strong>Error:</strong> {{ error_message }}
+  </div>
+  {% endif %}
+
+  <div class="columns">
+    <div class="column is-half">
+      <div class="box">
+        <form method="post">
+          <div class="field">
+            <label class="label" for="bucket_name">Bucket Name</label>
+            <div class="control has-icons-left">
+              <input
+                class="input {% if error_message %}is-danger{% endif %}"
+                type="text"
+                id="bucket_name"
+                name="bucket_name"
+                placeholder="my-bucket-name"
+                value="{{ bucket_name or '' }}"
+                required
+                pattern="[a-z0-9.-]+"
+                minlength="3"
+                maxlength="63"
+              />
+              <span class="icon is-small is-left">
+                <i class="fas fa-database"></i>
+              </span>
             </div>
-        </div>
+            <p class="help">
+              Bucket names must be 3-63 characters long and contain only
+              lowercase letters, numbers, hyphens, and periods.
+            </p>
+          </div>
+
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">
+                <i class="fas fa-plus"></i>&nbsp;Create Bucket
+              </button>
+            </div>
+            <div class="control">
+              <a href="{{ url_for('s3_buckets') }}" class="button is-light">
+                Cancel
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
 
-    {% if error_message %}
-    <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error:</strong> {{ error_message }}
-    </div>
-    {% endif %}
-
-    <div class="columns">
-        <div class="column is-half">
-            <div class="box">
-                <form method="post">
-                    <div class="field">
-                        <label class="label" for="bucket_name">Bucket Name</label>
-                        <div class="control has-icons-left">
-                            <input 
-                                class="input {% if error_message %}is-danger{% endif %}" 
-                                type="text" 
-                                id="bucket_name"
-                                name="bucket_name" 
-                                placeholder="my-bucket-name"
-                                value="{{ bucket_name or '' }}"
-                                required
-                                pattern="[a-z0-9.-]+"
-                                minlength="3"
-                                maxlength="63"
-                            >
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-database"></i>
-                            </span>
-                        </div>
-                        <p class="help">
-                            Bucket names must be 3-63 characters long and contain only lowercase letters, numbers, hyphens, and periods.
-                        </p>
-                    </div>
-
-                    <div class="field is-grouped">
-                        <div class="control">
-                            <button type="submit" class="button is-primary">
-                                <i class="fas fa-plus"></i>&nbsp;Create Bucket
-                            </button>
-                        </div>
-                        <div class="control">
-                            <a href="{{ url_for('s3_buckets') }}" class="button is-light">
-                                Cancel
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <div class="column is-half">
+      <div class="notification is-info">
+        <h5 class="title is-5">Bucket Naming Rules</h5>
+        <div class="content">
+          <ul>
+            <li>Must be between 3 and 63 characters long</li>
+            <li>
+              Can contain only lowercase letters, numbers, hyphens, and periods
+            </li>
+            <li>Must start and end with a lowercase letter or number</li>
+            <li>Cannot contain consecutive periods</li>
+            <li>Cannot have periods adjacent to hyphens</li>
+            <li>Cannot be formatted as an IP address</li>
+          </ul>
         </div>
+      </div>
 
-        <div class="column is-half">
-            <div class="notification is-info">
-                <h5 class="title is-5">Bucket Naming Rules</h5>
-                <div class="content">
-                    <ul>
-                        <li>Must be between 3 and 63 characters long</li>
-                        <li>Can contain only lowercase letters, numbers, hyphens, and periods</li>
-                        <li>Must start and end with a lowercase letter or number</li>
-                        <li>Cannot contain consecutive periods</li>
-                        <li>Cannot have periods adjacent to hyphens</li>
-                        <li>Cannot be formatted as an IP address</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="notification is-light">
-                <h6 class="title is-6">Examples of Valid Names</h6>
-                <div class="content">
-                    <ul>
-                        <li><code>my-bucket</code></li>
-                        <li><code>data-storage-2024</code></li>
-                        <li><code>user.uploads</code></li>
-                        <li><code>backup-files-v2</code></li>
-                    </ul>
-                </div>
-            </div>
+      <div class="notification is-light">
+        <h6 class="title is-6">Examples of Valid Names</h6>
+        <div class="content">
+          <ul>
+            <li><code>my-bucket</code></li>
+            <li><code>data-storage-2024</code></li>
+            <li><code>user.uploads</code></li>
+            <li><code>backup-files-v2</code></li>
+          </ul>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-hide notifications
-        const notifications = document.querySelectorAll('.notification .delete');
-        notifications.forEach((deleteButton) => {
-            deleteButton.addEventListener('click', () => {
-                deleteButton.parentElement.remove();
-            });
-        });
-
-        // Real-time validation feedback
-        const bucketInput = document.getElementById('bucket_name');
-        bucketInput.addEventListener('input', (e) => {
-            const value = e.target.value;
-            const isValid = /^[a-z0-9.-]*$/.test(value) && 
-                           value.length >= 3 && 
-                           value.length <= 63 &&
-                           !value.includes('..') &&
-                           !value.includes('.-') &&
-                           !value.includes('-.');
-            
-            if (value.length > 0) {
-                if (isValid) {
-                    e.target.classList.remove('is-danger');
-                    e.target.classList.add('is-success');
-                } else {
-                    e.target.classList.remove('is-success');
-                    e.target.classList.add('is-danger');
-                }
-            } else {
-                e.target.classList.remove('is-success', 'is-danger');
-            }
-        });
+  document.addEventListener("DOMContentLoaded", () => {
+    // Auto-hide notifications
+    const notifications = document.querySelectorAll(".notification .delete");
+    notifications.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", () => {
+        deleteButton.parentElement.remove();
+      });
     });
+
+    // Real-time validation feedback
+    const bucketInput = document.getElementById("bucket_name");
+    bucketInput.addEventListener("input", (e) => {
+      const value = e.target.value;
+      const isValid =
+        /^[a-z0-9.-]*$/.test(value) &&
+        value.length >= 3 &&
+        value.length <= 63 &&
+        !value.includes("..") &&
+        !value.includes(".-") &&
+        !value.includes("-.");
+
+      if (value.length > 0) {
+        if (isValid) {
+          e.target.classList.remove("is-danger");
+          e.target.classList.add("is-success");
+        } else {
+          e.target.classList.remove("is-success");
+          e.target.classList.add("is-danger");
+        }
+      } else {
+        e.target.classList.remove("is-success", "is-danger");
+      }
+    });
+  });
 </script>
 {% endblock %}

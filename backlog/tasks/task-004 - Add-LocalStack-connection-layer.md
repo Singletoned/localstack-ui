@@ -3,8 +3,8 @@ id: task-004
 title: Add LocalStack connection layer
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:23'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:23"
 labels: []
 dependencies: []
 ---

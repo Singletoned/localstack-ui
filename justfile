@@ -1,7 +1,6 @@
 # Format code with ruff
 format:
-    ruff format src/
-    ruff check --fix src/
+    taidy .
 
 # Start development environment in foreground
 run:
@@ -10,7 +9,7 @@ run:
 
 # Run end-to-end tests
 test:
-    docker compose -f tests/compose.yaml up --build --abort-on-container-exit playwright
+    docker compose -f tests/compose.yaml up --build --abort-on-container-exit localstack-ui-playwright
 
 # Clean up Docker resources
 clean:

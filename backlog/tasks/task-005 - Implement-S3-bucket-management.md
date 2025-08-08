@@ -3,8 +3,8 @@ id: task-005
 title: Implement S3 bucket management
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:26'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:26"
 labels: []
 dependencies: []
 ---

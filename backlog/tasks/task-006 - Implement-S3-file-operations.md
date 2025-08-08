@@ -3,8 +3,8 @@ id: task-006
 title: Implement S3 file operations
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:42'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:42"
 labels: []
 dependencies: []
 ---

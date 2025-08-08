@@ -1,189 +1,190 @@
-{% extends "base.html" %}
-
-{% block title %}Lambda Functions - LocalStack UI{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Lambda Functions - LocalStack UI{%
+endblock %} {% block content %}
 <div class="container">
-    <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title">
-                    <i class="fas fa-bolt"></i>&nbsp;Lambda Functions
-                </h1>
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title"><i class="fas fa-bolt"></i>&nbsp;Lambda Functions</h1>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <form method="get" class="field has-addons">
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              name="search"
+              placeholder="Search functions..."
+              value="{{ search_query or '' }}"
+            />
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-info">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% if error_message %}
+  <div class="notification is-danger">
+    <button class="delete"></button>
+    <strong>Error:</strong> {{ error_message }}
+  </div>
+  {% endif %} {% if search_query %}
+  <div class="notification is-info">
+    <button class="delete"></button>
+    Found <strong>{{ functions|length }}</strong> function(s) matching "{{
+    search_query }}"
+    <a
+      href="{{ url_for('lambda_functions') }}"
+      class="button is-small is-light ml-2"
+    >
+      Clear Search
+    </a>
+  </div>
+  {% endif %} {% if functions %}
+  <div class="columns is-multiline">
+    {% for function in functions %}
+    <div class="column is-6">
+      <div class="card">
+        <div class="card-content">
+          <div class="media">
+            <div class="media-left">
+              <figure class="image is-48x48">
+                <span class="icon is-large has-text-warning">
+                  <i class="fas fa-bolt fa-2x"></i>
+                </span>
+              </figure>
             </div>
-        </div>
-        <div class="level-right">
-            <div class="level-item">
-                <form method="get" class="field has-addons">
-                    <div class="control">
-                        <input 
-                            class="input" 
-                            type="text" 
-                            name="search" 
-                            placeholder="Search functions..."
-                            value="{{ search_query or '' }}"
-                        >
-                    </div>
-                    <div class="control">
-                        <button type="submit" class="button is-info">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+            <div class="media-content">
+              <p class="title is-4">{{ function.function_name }}</p>
+              <p class="subtitle is-6">
+                {{ function.runtime }} {% if function.state != 'Active' %}
+                <span class="tag is-warning">{{ function.state }}</span>
+                {% endif %}
+              </p>
             </div>
-        </div>
-    </div>
+          </div>
 
-    {% if error_message %}
-    <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error:</strong> {{ error_message }}
-    </div>
-    {% endif %}
+          <div class="content">
+            {% if function.description %}
+            <p>{{ function.description }}</p>
+            {% else %}
+            <p class="has-text-grey">No description available</p>
+            {% endif %}
 
-    {% if search_query %}
-    <div class="notification is-info">
-        <button class="delete"></button>
-        Found <strong>{{ functions|length }}</strong> function(s) matching "{{ search_query }}"
-        <a href="{{ url_for('lambda_functions') }}" class="button is-small is-light ml-2">
-            Clear Search
-        </a>
-    </div>
-    {% endif %}
+            <div class="tags">
+              <span class="tag is-light">
+                <i class="fas fa-memory"></i>&nbsp;{{
+                format_memory_size(function.memory_size) }}
+              </span>
+              <span class="tag is-light">
+                <i class="fas fa-clock"></i>&nbsp;{{
+                format_timeout(function.timeout) }}
+              </span>
+              <span class="tag is-light">
+                <i class="fas fa-file-archive"></i>&nbsp;{{
+                format_code_size(function.code_size) }}
+              </span>
+            </div>
 
-    {% if functions %}
-    <div class="columns is-multiline">
-        {% for function in functions %}
-        <div class="column is-6">
-            <div class="card">
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-left">
-                            <figure class="image is-48x48">
-                                <span class="icon is-large has-text-warning">
-                                    <i class="fas fa-bolt fa-2x"></i>
-                                </span>
-                            </figure>
-                        </div>
-                        <div class="media-content">
-                            <p class="title is-4">{{ function.function_name }}</p>
-                            <p class="subtitle is-6">
-                                {{ function.runtime }}
-                                {% if function.state != 'Active' %}
-                                <span class="tag is-warning">{{ function.state }}</span>
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="content">
-                        {% if function.description %}
-                        <p>{{ function.description }}</p>
-                        {% else %}
-                        <p class="has-text-grey">No description available</p>
-                        {% endif %}
-
-                        <div class="tags">
-                            <span class="tag is-light">
-                                <i class="fas fa-memory"></i>&nbsp;{{ format_memory_size(function.memory_size) }}
-                            </span>
-                            <span class="tag is-light">
-                                <i class="fas fa-clock"></i>&nbsp;{{ format_timeout(function.timeout) }}
-                            </span>
-                            <span class="tag is-light">
-                                <i class="fas fa-file-archive"></i>&nbsp;{{ format_code_size(function.code_size) }}
-                            </span>
-                        </div>
-
-                        <div class="level is-mobile">
-                            <div class="level-left">
-                                <div class="level-item">
-                                    <small class="has-text-grey">
-                                        Updated: {{ function.last_modified[:19] }}
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="level-right">
-                                <div class="level-item">
-                                    <a href="{{ url_for('lambda_function_detail', function_name=function.function_name) }}" 
-                                       class="button is-small is-info">
-                                        <i class="fas fa-eye"></i>&nbsp;View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="level is-mobile">
+              <div class="level-left">
+                <div class="level-item">
+                  <small class="has-text-grey">
+                    Updated: {{ function.last_modified[:19] }}
+                  </small>
                 </div>
+              </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <a
+                    href="{{ url_for('lambda_function_detail', function_name=function.function_name) }}"
+                    class="button is-small is-info"
+                  >
+                    <i class="fas fa-eye"></i>&nbsp;View Details
+                  </a>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        {% endfor %}
+      </div>
     </div>
+    {% endfor %}
+  </div>
 
-    <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <p class="has-text-grey">{{ functions|length }} function(s) found</p>
-            </div>
-        </div>
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <p class="has-text-grey">{{ functions|length }} function(s) found</p>
+      </div>
     </div>
-    {% else %}
-    <div class="notification is-info">
-        <div class="content">
-            <h4>
-                {% if search_query %}
-                No Functions Found
-                {% else %}
-                No Lambda Functions
-                {% endif %}
-            </h4>
-            <p>
-                {% if search_query %}
-                No Lambda functions match your search query "{{ search_query }}".
-                <a href="{{ url_for('lambda_functions') }}">Show all functions</a>
-                {% else %}
-                There are no Lambda functions in this LocalStack instance yet.
-                {% endif %}
-            </p>
-        </div>
+  </div>
+  {% else %}
+  <div class="notification is-info">
+    <div class="content">
+      <h4>
+        {% if search_query %} No Functions Found {% else %} No Lambda Functions
+        {% endif %}
+      </h4>
+      <p>
+        {% if search_query %} No Lambda functions match your search query "{{
+        search_query }}".
+        <a href="{{ url_for('lambda_functions') }}">Show all functions</a>
+        {% else %} There are no Lambda functions in this LocalStack instance
+        yet. {% endif %}
+      </p>
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
 
-    <div class="notification is-light">
-        <div class="content">
-            <h5>About Lambda Functions</h5>
-            <ul>
-                <li>This is a read-only view of Lambda functions in LocalStack</li>
-                <li>Function details include runtime, memory, timeout, and environment variables</li>
-                <li>Use the search box to filter functions by name, description, or runtime</li>
-                <li>Click "View Details" to see complete function configuration</li>
-            </ul>
-        </div>
+  <div class="notification is-light">
+    <div class="content">
+      <h5>About Lambda Functions</h5>
+      <ul>
+        <li>This is a read-only view of Lambda functions in LocalStack</li>
+        <li>
+          Function details include runtime, memory, timeout, and environment
+          variables
+        </li>
+        <li>
+          Use the search box to filter functions by name, description, or
+          runtime
+        </li>
+        <li>Click "View Details" to see complete function configuration</li>
+      </ul>
     </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-hide notifications
-        const notifications = document.querySelectorAll('.notification .delete');
-        notifications.forEach((deleteButton) => {
-            deleteButton.addEventListener('click', () => {
-                deleteButton.parentElement.remove();
-            });
-        });
+  document.addEventListener('DOMContentLoaded', () => {
+      // Auto-hide notifications
+      const notifications = document.querySelectorAll('.notification .delete');
+      notifications.forEach((deleteButton) => {
+          deleteButton.addEventListener('click', () => {
+              deleteButton.parentElement.remove();
+          });
+      });
 
-        // Auto-submit search form on input
-        const searchInput = document.querySelector('input[name="search"]');
-        if (searchInput) {
-            let searchTimeout;
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    if (e.target.value !== '{{ search_query or '' }}') {
-                        e.target.form.submit();
-                    }
-                }, 500);
-            });
-        }
-    });
+      // Auto-submit search form on input
+      const searchInput = document.querySelector('input[name="search"]');
+      if (searchInput) {
+          let searchTimeout;
+          searchInput.addEventListener('input', (e) => {
+              clearTimeout(searchTimeout);
+              searchTimeout = setTimeout(() => {
+                  if (e.target.value !== '{{ search_query or '' }}') {
+                      e.target.form.submit();
+                  }
+              }, 500);
+          });
+      }
+  });
 </script>
 {% endblock %}

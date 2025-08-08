@@ -1,125 +1,130 @@
-{% extends "base.html" %}
-
-{% block title %}Delete S3 Bucket - LocalStack UI{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Delete S3 Bucket - LocalStack UI{%
+endblock %} {% block content %}
 <div class="container">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Delete Bucket</a></li>
-        </ul>
-    </nav>
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
+      <li class="is-active">
+        <a href="#" aria-current="page">Delete Bucket</a>
+      </li>
+    </ul>
+  </nav>
 
-    <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title has-text-danger">
-                    <i class="fas fa-trash"></i>&nbsp;Delete S3 Bucket
-                </h1>
-            </div>
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title has-text-danger">
+          <i class="fas fa-trash"></i>&nbsp;Delete S3 Bucket
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  {% if error_message %}
+  <div class="notification is-danger">
+    <button class="delete"></button>
+    <strong>Error:</strong> {{ error_message }}
+  </div>
+  {% endif %}
+
+  <div class="columns">
+    <div class="column is-two-thirds">
+      <div class="notification is-warning">
+        <h4 class="title is-4">
+          <i class="fas fa-exclamation-triangle"></i>&nbsp;Confirm Deletion
+        </h4>
+        <div class="content">
+          <p>
+            You are about to permanently delete the S3 bucket
+            <strong>{{ bucket_name }}</strong>. This action cannot be undone.
+          </p>
+          <p>
+            <strong>Important:</strong> The bucket must be empty before it can
+            be deleted. If the bucket contains any files, you will need to
+            delete them first.
+          </p>
         </div>
-    </div>
+      </div>
 
-    {% if error_message %}
-    <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error:</strong> {{ error_message }}
-    </div>
-    {% endif %}
-
-    <div class="columns">
-        <div class="column is-two-thirds">
-            <div class="notification is-warning">
-                <h4 class="title is-4">
-                    <i class="fas fa-exclamation-triangle"></i>&nbsp;Confirm Deletion
-                </h4>
-                <div class="content">
-                    <p>
-                        You are about to permanently delete the S3 bucket 
-                        <strong>{{ bucket_name }}</strong>. This action cannot be undone.
-                    </p>
-                    <p>
-                        <strong>Important:</strong> The bucket must be empty before it can be deleted. 
-                        If the bucket contains any files, you will need to delete them first.
-                    </p>
-                </div>
-            </div>
-
-            <div class="box">
-                <div class="field">
-                    <label class="label">Bucket to Delete</label>
-                    <div class="control">
-                        <input class="input" type="text" value="{{ bucket_name }}" readonly>
-                    </div>
-                </div>
-
-                <div class="field is-grouped">
-                    <div class="control">
-                        <form method="post" style="display: inline;">
-                            <button type="submit" class="button is-danger">
-                                <i class="fas fa-trash"></i>&nbsp;Yes, Delete Bucket
-                            </button>
-                        </form>
-                    </div>
-                    <div class="control">
-                        <a href="{{ url_for('s3_buckets') }}" class="button is-light">
-                            <i class="fas fa-times"></i>&nbsp;Cancel
-                        </a>
-                    </div>
-                </div>
-            </div>
+      <div class="box">
+        <div class="field">
+          <label class="label">Bucket to Delete</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              value="{{ bucket_name }}"
+              readonly
+            />
+          </div>
         </div>
 
-        <div class="column is-one-third">
-            <div class="notification is-light">
-                <h5 class="title is-5">What Happens Next?</h5>
-                <div class="content">
-                    <ol>
-                        <li>We'll check if the bucket is empty</li>
-                        <li>If empty, the bucket will be deleted immediately</li>
-                        <li>If not empty, deletion will be prevented</li>
-                        <li>You'll be redirected back to the bucket list</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div class="notification is-info">
-                <h6 class="title is-6">Need to Empty the Bucket?</h6>
-                <div class="content">
-                    <p>
-                        If the bucket contains files, you can view and delete them 
-                        by clicking the "View Contents" button on the bucket list page.
-                    </p>
-                </div>
-            </div>
+        <div class="field is-grouped">
+          <div class="control">
+            <form method="post" style="display: inline">
+              <button type="submit" class="button is-danger">
+                <i class="fas fa-trash"></i>&nbsp;Yes, Delete Bucket
+              </button>
+            </form>
+          </div>
+          <div class="control">
+            <a href="{{ url_for('s3_buckets') }}" class="button is-light">
+              <i class="fas fa-times"></i>&nbsp;Cancel
+            </a>
+          </div>
         </div>
+      </div>
     </div>
+
+    <div class="column is-one-third">
+      <div class="notification is-light">
+        <h5 class="title is-5">What Happens Next?</h5>
+        <div class="content">
+          <ol>
+            <li>We'll check if the bucket is empty</li>
+            <li>If empty, the bucket will be deleted immediately</li>
+            <li>If not empty, deletion will be prevented</li>
+            <li>You'll be redirected back to the bucket list</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="notification is-info">
+        <h6 class="title is-6">Need to Empty the Bucket?</h6>
+        <div class="content">
+          <p>
+            If the bucket contains files, you can view and delete them by
+            clicking the "View Contents" button on the bucket list page.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-hide notifications
-        const notifications = document.querySelectorAll('.notification .delete');
-        notifications.forEach((deleteButton) => {
-            deleteButton.addEventListener('click', () => {
-                deleteButton.parentElement.remove();
-            });
-        });
-
-        // Add confirmation to delete button
-        const deleteForm = document.querySelector('form[method="post"]');
-        if (deleteForm) {
-            deleteForm.addEventListener('submit', (e) => {
-                const confirmed = confirm(
-                    'Are you absolutely sure you want to delete this bucket? This action cannot be undone.'
-                );
-                if (!confirmed) {
-                    e.preventDefault();
-                }
-            });
-        }
+  document.addEventListener("DOMContentLoaded", () => {
+    // Auto-hide notifications
+    const notifications = document.querySelectorAll(".notification .delete");
+    notifications.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", () => {
+        deleteButton.parentElement.remove();
+      });
     });
+
+    // Add confirmation to delete button
+    const deleteForm = document.querySelector('form[method="post"]');
+    if (deleteForm) {
+      deleteForm.addEventListener("submit", (e) => {
+        const confirmed = confirm(
+          "Are you absolutely sure you want to delete this bucket? This action cannot be undone.",
+        );
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      });
+    }
+  });
 </script>
 {% endblock %}

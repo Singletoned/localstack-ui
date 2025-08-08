@@ -3,8 +3,8 @@ id: task-002
 title: Create Docker infrastructure
 status: Done
 assignee: []
-created_date: '2025-08-07 20:05'
-updated_date: '2025-08-07 20:19'
+created_date: "2025-08-07 20:05"
+updated_date: "2025-08-07 20:19"
 labels: []
 dependencies: []
 ---

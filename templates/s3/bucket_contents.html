@@ -1,130 +1,142 @@
-{% extends "base.html" %}
-
-{% block title %}{{ bucket_name }} Contents - LocalStack UI{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}{{ bucket_name }} Contents -
+LocalStack UI{% endblock %} {% block content %}
 <div class="container">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
-            <li class="is-active"><a href="#" aria-current="page">{{ bucket_name }}</a></li>
-        </ul>
-    </nav>
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('s3_buckets') }}">S3 Buckets</a></li>
+      <li class="is-active">
+        <a href="#" aria-current="page">{{ bucket_name }}</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title">
+          <i class="fas fa-folder-open"></i>&nbsp;{{ bucket_name }}
+        </h1>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <a
+          href="{{ url_for('s3_upload_file', bucket_name=bucket_name) }}"
+          class="button is-primary"
+        >
+          <i class="fas fa-upload"></i>&nbsp;Upload File
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% if error_message %}
+  <div class="notification is-danger">
+    <button class="delete"></button>
+    <strong>Error:</strong> {{ error_message }}
+  </div>
+  {% endif %} {% if objects %}
+  <div class="box">
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Size</th>
+          <th>Last Modified</th>
+          <th class="has-text-centered">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in objects %}
+        <tr>
+          <td>
+            <span class="icon-text">
+              <span class="icon">
+                {% if obj.key.endswith('/') %}
+                <i class="fas fa-folder"></i>
+                {% else %}
+                <i class="fas fa-file"></i>
+                {% endif %}
+              </span>
+              <span><strong>{{ obj.key }}</strong></span>
+            </span>
+          </td>
+          <td>{{ format_file_size(obj.size) }}</td>
+          <td>{{ obj.last_modified.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td class="has-text-centered">
+            <div class="buttons is-centered">
+              {% if not obj.key.endswith('/') %}
+              <a
+                href="{{ url_for('s3_download_file', bucket_name=bucket_name, file_key=obj.key) }}"
+                class="button is-small is-info"
+                title="Download File"
+              >
+                <i class="fas fa-download"></i>
+              </a>
+              <a
+                href="{{ url_for('s3_delete_file', bucket_name=bucket_name, file_key=obj.key) }}"
+                class="button is-small is-danger"
+                title="Delete File"
+              >
+                <i class="fas fa-trash"></i>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
     <div class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <h1 class="title">
-                    <i class="fas fa-folder-open"></i>&nbsp;{{ bucket_name }}
-                </h1>
-            </div>
+      <div class="level-left">
+        <div class="level-item">
+          <p class="has-text-grey">{{ objects|length }} item(s)</p>
         </div>
-        <div class="level-right">
-            <div class="level-item">
-                <a href="{{ url_for('s3_upload_file', bucket_name=bucket_name) }}" class="button is-primary">
-                    <i class="fas fa-upload"></i>&nbsp;Upload File
-                </a>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
+  {% else %}
+  <div class="notification is-info">
+    <div class="content">
+      <h4>Empty Bucket</h4>
+      <p>
+        This bucket doesn't contain any files yet. Upload your first file to get
+        started.
+      </p>
+      <a
+        href="{{ url_for('s3_upload_file', bucket_name=bucket_name) }}"
+        class="button is-primary"
+      >
+        <i class="fas fa-upload"></i>&nbsp;Upload Your First File
+      </a>
+    </div>
+  </div>
+  {% endif %}
 
-    {% if error_message %}
-    <div class="notification is-danger">
-        <button class="delete"></button>
-        <strong>Error:</strong> {{ error_message }}
+  <div class="notification is-light">
+    <div class="content">
+      <h5>File Operations</h5>
+      <ul>
+        <li>Maximum file size: <strong>1MB</strong></li>
+        <li>Click the download button to save files to your computer</li>
+        <li>Use the delete button to remove files (this cannot be undone)</li>
+        <li>File names are case-sensitive</li>
+      </ul>
     </div>
-    {% endif %}
-
-    {% if objects %}
-    <div class="box">
-        <table class="table is-fullwidth is-striped">
-            <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>Size</th>
-                    <th>Last Modified</th>
-                    <th class="has-text-centered">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for obj in objects %}
-                <tr>
-                    <td>
-                        <span class="icon-text">
-                            <span class="icon">
-                                {% if obj.key.endswith('/') %}
-                                <i class="fas fa-folder"></i>
-                                {% else %}
-                                <i class="fas fa-file"></i>
-                                {% endif %}
-                            </span>
-                            <span><strong>{{ obj.key }}</strong></span>
-                        </span>
-                    </td>
-                    <td>{{ format_file_size(obj.size) }}</td>
-                    <td>{{ obj.last_modified.strftime('%Y-%m-%d %H:%M') }}</td>
-                    <td class="has-text-centered">
-                        <div class="buttons is-centered">
-                            {% if not obj.key.endswith('/') %}
-                            <a href="{{ url_for('s3_download_file', bucket_name=bucket_name, file_key=obj.key) }}" 
-                               class="button is-small is-info" title="Download File">
-                                <i class="fas fa-download"></i>
-                            </a>
-                            <a href="{{ url_for('s3_delete_file', bucket_name=bucket_name, file_key=obj.key) }}" 
-                               class="button is-small is-danger" title="Delete File">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="level">
-            <div class="level-left">
-                <div class="level-item">
-                    <p class="has-text-grey">{{ objects|length }} item(s)</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="notification is-info">
-        <div class="content">
-            <h4>Empty Bucket</h4>
-            <p>This bucket doesn't contain any files yet. Upload your first file to get started.</p>
-            <a href="{{ url_for('s3_upload_file', bucket_name=bucket_name) }}" class="button is-primary">
-                <i class="fas fa-upload"></i>&nbsp;Upload Your First File
-            </a>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="notification is-light">
-        <div class="content">
-            <h5>File Operations</h5>
-            <ul>
-                <li>Maximum file size: <strong>1MB</strong></li>
-                <li>Click the download button to save files to your computer</li>
-                <li>Use the delete button to remove files (this cannot be undone)</li>
-                <li>File names are case-sensitive</li>
-            </ul>
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Auto-hide notifications
-        const notifications = document.querySelectorAll('.notification .delete');
-        notifications.forEach((deleteButton) => {
-            deleteButton.addEventListener('click', () => {
-                deleteButton.parentElement.remove();
-            });
-        });
+  document.addEventListener("DOMContentLoaded", () => {
+    // Auto-hide notifications
+    const notifications = document.querySelectorAll(".notification .delete");
+    notifications.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", () => {
+        deleteButton.parentElement.remove();
+      });
     });
+  });
 </script>
 {% endblock %}
