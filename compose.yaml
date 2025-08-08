@@ -32,8 +32,8 @@ services:
   # LocalStack - AWS services emulator
   localstack:
     build:
-      context: ./docker/localstack
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/localstack/Dockerfile
     container_name: localstack-ui-localstack
     ports:
       - "4566:4566" # LocalStack main port
